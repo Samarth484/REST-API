@@ -14,85 +14,53 @@ app.use(express.static("public"));
 
 //TODO
 
-mongoose.connect("mongodb://localhost:27017/wikiDB",{useNewUrlParser:true,useUnifiedTopology: true});
-
-const articleSchema = {
-  title:String,
-  content:String
-};
-
-const Article= mongoose.model("Article",articleSchema);
-
-app.get("/articles",function(req,res){
-  Article.find(function(err,foundArticles){
-    if(err)
-    res.send(err);
-    else
-  res.send(foundArticles);
-  });
+mongoose.connect("mongodb://localhost:27017/wikiDB", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
 });
 
-app.post("/articles",function(req,res){
-   // console.log(req.body.title);
-   // console.log(req.body.content);
+const articleSchema = {
+  title: String,
+  content: String
+};
 
-  const newArticle=new Article({
-    title:req.body.title,
+const Article = mongoose.model("Article", articleSchema);
+
+
+
+app.route("/articles")
+.get(function(req, res) {
+  Article.find(function(err, foundArticles) {
+    if (err)
+      res.send(err);
+    else
+      res.send(foundArticles);
+  });
+})
+.post(function(req, res) {
+  // console.log(req.body.title);
+  // console.log(req.body.content);
+
+  const newArticle = new Article({
+    title: req.body.title,
     content: req.body.content
   });
 
-  newArticle.save(function(err){
-    if(!err)
-    res.send("Successfully added a new article!");
+  newArticle.save(function(err) {
+    if (!err)
+      res.send("Successfully added a new article!");
     else
-    res.send(err);
+      res.send(err);
+  });
+})
+.delete(function(req, res) {
+  Article.deleteMany({}, function(err) {
+    if (!err)
+      res.send("Successfully deleted all articles!");
+    else
+      res.send(err);
   });
 });
-
-app.delete("/articles",function(req,res){
-  Article.deleteMany({},function(err){
-    if(!err)
-  res.send("Successfully deleted all articles!");
-  else
-  res.send(err);
-});
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
