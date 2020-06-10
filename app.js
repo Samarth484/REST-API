@@ -26,7 +26,7 @@ const articleSchema = {
 
 const Article = mongoose.model("Article", articleSchema);
 
-
+////////////////////////REQUESTS TARGETING ALL ARTICLE/////////////////////////
 
 app.route("/articles")
 .get(function(req, res) {
@@ -60,6 +60,60 @@ app.route("/articles")
     else
       res.send(err);
   });
+});
+
+
+
+
+////////////////////////REQUESTS TARGETING A SPECIFIC ARTICLE/////////////////////////
+
+
+
+app.route("/articles/:genericArticle")
+.get(function(req,res){
+  Article.findOne({title:req.params.genericArticle},function(err,foundArticle){
+    if(foundArticle)
+    res.send(foundArticle);
+    else
+    res.send("No articles matching that title was found!");
+  });
+})
+.put(function(req,res){
+  Article.update(
+    {title: req.params.genericArticle},
+    {title:req.body.title,content:req.body.content},
+    {overwrite:true},
+    function(err){
+      if(!err){
+        res.send("Successfully updated article.");
+      }
+    }
+
+  );
+})
+.patch(function(req,res){
+
+  Article.update(
+    {title:req.params.genericArticle},
+    {$set:req.body },
+    function(err){
+      if(!err)
+      res.send("Successfully updated article!");
+      else
+      res.send(err);
+    }
+  )
+})
+.delete(function(req,res){
+  Article.deleteOne(
+    {title:req.params.genericArticle},function(err){
+      if(!err)
+      res.send("Article deleted Successfully");
+      else
+      res.send(err);
+
+    }
+  );
 });
 
 
